@@ -2,8 +2,9 @@
   "name": "scraper",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +12,10 @@
   "license": "ISC",
   "dependencies": {
     "convert-excel-to-json": "^1.6.1",
-    "puppeteer": "^1.14.0"
+    "puppeteer": "^1.14.0",
+    "yarn": "^1.15.2"
+  },
+  "devDependencies": {
+    "electron": "^4.1.4"
   }
 }
