@@ -35,15 +35,16 @@ let nursingInputSelector="#ctl00_MainContent_txtLastname";
 
 
 
-async function physicianScraper(){
+async function physicianScraper(imageFolder){
 const browser = await puppeteer.launch();
+started();
 
 
 for (let i=0; i< resultArr.length; i++){
 let val=resultArr[i];
+//Runs if provider is a physician in Oregon
+ if (val.G=="34"  && val.L.includes(',OR')){
 
- if (val.G=="34"  && val.M.includes('OR')){
-  console.log(val.M);
 
   const page = await browser.newPage();
   await page.goto('https://omb.oregon.gov/clients/ormb/public/verificationrequest.aspx');
@@ -52,12 +53,79 @@ let val=resultArr[i];
   await page.waitFor(150);
   await page.click('#btnLicense')
    // await page.setViewport({width: 1000, height: 1000});
-  await page.waitFor(700);
-  await page.screenshot({path:imagePath+ val.F+'.png', fullPage: true});
+  await page.waitFor(750);
+  await page.emulateMedia('screen');
+  await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'});
+  //await page.screenshot({path:imageFolder+'\\'+ val.F+'.png', fullPage: true});
   await page.close();
 }
+
+//Runs if provider is LPC in Oregon
+else if (val.G=="33"  && val.L.includes(',OR') && val.I=="372") {
+
+  const page = await browser.newPage();
+  await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
+  await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select');
+await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select', 'LPC')
+await page.waitFor(100);
+
+  await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)', (val.K).slice(1));
+  await page.waitFor(250);
+  await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]')
+  await page.waitFor(650);
+  //await page.screenshot({path:imageFolder+'\\'+ val.F+'.png', fullPage: true});
+  await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
+  await page.close();
 }
- await browser.close();
+//Runs if provider is LMFT in Oregon
+else if (val.G=="33"  && val.L.includes(',OR') && val.I=="371") {
+
+  const page = await browser.newPage();
+  await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
+  await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select');
+await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select', 'LPC')
+await page.waitFor(100);
+
+  await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)', (val.K).slice(1));
+  await page.waitFor(250);
+  await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]')
+  await page.waitFor(650);
+  //await page.screenshot({path:imageFolder+'\\'+ val.F+'.png', fullPage: true});
+  await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
+  await page.close();
+  }
+//Runs if provider is nurse practicioner
+else if (val.G == "42" && val.L.includes(',OR')) {
+  const page = await browser.newPage();
+  await page.goto('https://osbn.oregon.gov/OSBNVerification/Default.aspx');
+  await page.type('#ctl00_MainContent_txtLicense', val.K);
+  await page.waitFor(150);
+  await page.click('#ctl00_MainContent_btnLicense');
+  await page.waitFor(450);
+  await page.click('#ctl00_MainContent_gvSearchResult > tbody > tr:nth-child(2) > td:nth-child(1) > a');
+  await page.waitFor(550);
+  //await page.screenshot({path:imageFolder+'\\'+ val.F+'.png', fullPage: true});
+  await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
+  await page.close();
+
+}
+//Runs if provider is chiropractor
+if (val.G == "16" && val.L.includes(',OR')) {
+    const page = await browser.newPage();
+    await page.goto('https://obce.alcsoftware.com/liclookup.php');
+    await page.type('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(3) > td > center > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]', val.K)
+    await page.waitFor(150);
+    await page.click('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(3) > td > center > table:nth-child(3) > tbody > tr > td > input[type="submit"]:nth-child(1)');
+    await page.waitFor(450);
+    await page.click('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table > tbody > tr:nth-child(2) > td:nth-child(3) > a');
+    await page.waitFor(550);
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
+    await page.close();
+}
+
+}
+await browser.close();
+await allDone();
 }
 
 //test catch
@@ -69,19 +137,41 @@ let val=resultArr[i];
 
 
 
-function fileSelect(fileName){
+function fileSelect(fileName, outputFolder){
   console.log('fileSelected');
  expiredFile = excelToJson({
     sourceFile: fileName
 });
 
 resultArr=expiredFile.Sheet1;
-physicianScraper();
+physicianScraper(outputFolder);
 }
 
 //catch fileNameSent
-ipcMain.on('fileNameSent', (e, fileName) => {
-  fileSelect(fileName);
+ipcMain.on('fileNameSent', (e, fileName, outputFolder) => {
+  fileSelect(fileName, outputFolder);
+});
+
+
+//Catch please select pleaseSelectTrigger
+ipcMain.on('pleaseSelectTrigger', () => {
+  let pleaseSelectWindow = new BrowserWindow({
+  width: 300,
+  height: 220,
+  title: "Error"
+});
+ pleaseSelectWindow.loadURL(url.format(
+  {
+    pathname: path.join(__dirname, '.\\HTML-and-scripts\\pleaseSelectWindow.html'),
+    protocol: 'file',
+    slashes: true
+
+  }
+));
+//Garbage Collection
+pleaseSelectWindow.on('close', function(){
+  pleaseSelectWindow =null;
+});
 })
 
 
@@ -89,10 +179,50 @@ ipcMain.on('fileNameSent', (e, fileName) => {
 
 ipcMain.on('fileSelected', ()=> {
   console.log('ipc running')
-//  physicianScraper();
-});
-//physicianScraper();
 
+});
+
+//Process started popup
+function started(){
+    let startedWindow = new BrowserWindow({
+      width: 250,
+      height: 200,
+      title: "Error"
+    });
+    startedWindow.loadURL(url.format(
+      {
+    pathname: path.join(__dirname, '.\\HTML-and-scripts\\startedWindow.html'),
+    protocol: 'file',
+    slashes: true
+
+    }
+  ));
+  //Garbage Collection
+  startedWindow.on('close', function(){
+      startedWindow =null;
+    });
+  };
+
+//All done popup.
+function allDone(){
+    let allDoneWindow = new BrowserWindow({
+      width: 200,
+      height: 120,
+      title: "Error"
+    });
+    allDoneWindow.loadURL(url.format(
+      {
+    pathname: path.join(__dirname, '.\\HTML-and-scripts\\allDoneWindow.html'),
+    protocol: 'file',
+    slashes: true
+
+    }
+  ));
+//Garbage Collection
+allDoneWindow.on('close', function(){
+    allDoneWindow =null;
+  });
+};
 
 
 

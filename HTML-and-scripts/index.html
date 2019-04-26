@@ -1,17 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  License Scraper
+  <style media="screen">
+    body{
+      font-family: sans-serif;
+    padding: 10px;
+    }
+    .inputField{
+      border: solid black;
+      display: inline-block;
+    }
+    button{
+      display: inline-block;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
   </head>
 
   <body>
-
+<h5>License Scraper </h5>
 
 <div class="">
   Please select provider roster:
 </div>
-<button id="openFile" >Open</button>
+
+<br>
+<button id="openFile" class="btn waves-effect waves-light">Select</button>
 <input type='text' id='fileValue'>
+<br>
+
+<div>
+  Please select folder in which to save license screenshots
+</div>
+<button id="outputFolderSelect"  class="btn waves-effect waves-light">Select</button>
+<input type='text' id='outputFolderField' class='inputField'>
+
+<div>
+  <br>
+<button id='run-btn' class="btn waves-effect waves-light"> Run </button>
+</div>
+
+
 <script src="index.js">
 </script>
     </body>
