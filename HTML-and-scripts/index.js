@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 
- //var dialog = remote.require('dialog');
+
 const electron = require('electron');
 const {remote, ipcRenderer} = electron;
 const dialog = remote.dialog;
@@ -13,10 +13,12 @@ let outputFolder;
 document.getElementById('openFile').addEventListener('click', openFile);
 document.getElementById('outputFolderSelect').addEventListener('click', selectOutput);
 document.getElementById('run-btn').addEventListener('click', run);
+document.getElementById('help-btn').addEventListener('click', help);
 
 
- function openFile () {
 
+//Runs when Select Provider Roster button is clicked.
+ function openFile(){
 
    dialog.showOpenDialog(function (fileNames) {
      if (fileNames === undefined) return;
@@ -27,17 +29,12 @@ document.getElementById('run-btn').addEventListener('click', run);
 
     document.getElementById("fileValue").value = fileName;
 
-
       //ipcRenderer.send('testSend', fileName);
-
-
-  });
-
+      });
    });
-
  }
-
- function selectOutput () {
+//Runs when Select Output Folder button is clicked.
+ function selectOutput(){
    console.log('hey2!')
 
    dialog.showOpenDialog({properties:['openDirectory']},function (fileNames) {
@@ -45,15 +42,9 @@ document.getElementById('run-btn').addEventListener('click', run);
 
   outputFolder = fileNames[0];
 
-
-
     document.getElementById("outputFolderField").value = outputFolder;
 
-
-
-
    });
-
  }
 
  function run(){
@@ -62,4 +53,8 @@ document.getElementById('run-btn').addEventListener('click', run);
    }
 
    ipcRenderer.send('fileNameSent', fileName, outputFolder);
+ }
+
+ function help(){
+   ipcRenderer.send('helpButtonClick');
  }
