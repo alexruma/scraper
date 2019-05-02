@@ -6,6 +6,7 @@ const electron = require('electron');
 const {remote, ipcRenderer} = electron;
 const dialog = remote.dialog;
 
+
 let fileName;
 let outputFolder;
 
@@ -35,7 +36,7 @@ document.getElementById('help-btn').addEventListener('click', help);
  }
 //Runs when Select Output Folder button is clicked.
  function selectOutput(){
-   console.log('hey2!')
+
 
    dialog.showOpenDialog({properties:['openDirectory']},function (fileNames) {
      if (fileNames === undefined) return;
@@ -49,10 +50,12 @@ document.getElementById('help-btn').addEventListener('click', help);
 
  function run(){
    if (document.getElementById("outputFolderField").value ==='' || document.getElementById("fileValue").value ===''){
+     console.log('warning running')
       return ipcRenderer.send('pleaseSelectTrigger');
    }
 
    ipcRenderer.send('fileNameSent', fileName, outputFolder);
+   console.log('real deal running')
  }
 
  function help(){

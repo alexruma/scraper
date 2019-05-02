@@ -5,33 +5,38 @@ const url = require('url');
 const path = require('path');
 const excelToJson = require('convert-excel-to-json');
 
+
 //Electron destructure
 const {app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog} = electron;
 
+process.env.NODE_ENV = 'production'
 
 let expiredFile;
 let resultArr;
 
 
-const imagePath = __dirname + "\\images\\"
+//Path to Chrome on local machine. Puppeteer will utilize Chrome rather than Chromium.
+const exPath2='C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 
-
-
-
-
+let imagePath= __dirname + "\\images\\"
 
 async function physicianScraper(imageFolder){
-const browser = await puppeteer.launch();
+
+
+
+
+
+const browser = await puppeteer.launch({
+executablePath: exPath2
+});
 
 //launches started popup
 started();
-
 
 for (let i=0; i< resultArr.length; i++){
 let val=resultArr[i];
 //Runs if provider is a physician or physican assistant in Oregon
  if (val.G=="34"  && val.L.includes(',OR') || val.G=='33' && val.L.includes(',OR') && val.I=='227' || val.G=='46' && val.L.includes(',OR')){
-console.log(val.F)
 
   const page = await browser.newPage();
   const navigationPromise = page.waitForNavigation();
@@ -50,7 +55,7 @@ console.log(val.F)
 
 //Runs if provider is LPC in Oregon
 else if (val.G=="33"  && val.L.includes(',OR') && val.I=="372") {
-console.log(val.F)
+
   const page = await browser.newPage();
   const navigationPromise = page.waitForNavigation();
   await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
@@ -64,14 +69,14 @@ await page.waitFor(100);
    await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]');
   //this waitForSelector ensures that the page has loaded
   await page.waitForSelector('body > a > h3', {timeout:10000}).catch(()=>{page.close();
-    console.log('Page closed');
+    let uhoh;
   });
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
   await page.close();
 }
 //Runs if provider is LMFT in Oregon
 else if (val.G=="33"  && val.L.includes(',OR') && val.I=="371") {
-console.log(val.F)
+
   const page = await browser.newPage();
   const navigationPromise = page.waitForNavigation();
   await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
@@ -84,7 +89,7 @@ await page.waitFor(100);
   await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]')
   //this waitForSelector ensures that the page has loaded
   await page.waitForSelector('body > a > h3',{timeout:10000}).catch(()=>{page.close();
-    console.log('Page closed');
+    let uhoh;
   });
 
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
@@ -93,7 +98,7 @@ await page.waitFor(100);
 //Runs if provider is nurse practicioner or CRNA
 else if (val.G == "42" && val.L.includes(',OR') || val.G == "37" && val.L.includes(',OR')) {
   const page = await browser.newPage();
-  console.log(val.F)
+
   await page.goto('https://osbn.oregon.gov/OSBNVerification/Default.aspx');
   await page.type('#ctl00_MainContent_txtLicense', val.K);
   await page.waitFor(150);
@@ -101,7 +106,7 @@ else if (val.G == "42" && val.L.includes(',OR') || val.G == "37" && val.L.includ
   await page.waitForSelector('#aspnetForm > div.page > div.main > p > span > a > span');
   try { await page.click('#ctl00_MainContent_gvSearchResult > tbody > tr:nth-child(2) > td:nth-child(1) > a');
 } catch(error) {
-  cosole.log('Not found')
+console.log(error)
 }
   await page.waitFor(650);
   //await page.screenshot({path:imageFolder+'\\'+ val.F+'.png', fullPage: true});
@@ -111,7 +116,7 @@ else if (val.G == "42" && val.L.includes(',OR') || val.G == "37" && val.L.includ
 }
 //Runs if provider is chiropractor
 else if (val.G == "16" && val.L.includes(',OR')) {
-  console.log(val.F)
+
 
     const page = await browser.newPage();
     const navigationPromise = page.waitForNavigation();
@@ -128,7 +133,7 @@ else if (val.G == "16" && val.L.includes(',OR')) {
        await page.click('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table > tbody > tr:nth-child(2) > td:nth-child(3) > a');
        await page.waitForSelector('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table:nth-child(3) > tbody > tr > td > form > input[type="submit"]',{timeout:7000})
    } catch(error) {
-      console.log('Not found');
+      console.log(error)
     }
 
     await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
@@ -153,8 +158,8 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
        await page.click('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > a');
 
        await page.waitForSelector('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > a:nth-child(20)');
-     } catch(error) { console.log('Page closed');
-      page.close();
+     } catch(error) { console.log(error)
+
     }
 
     await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
@@ -163,15 +168,17 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
   //Runs if provider is dentist
   else if (val.G == "53" && val.L.includes(',OR') && val.K.length <=6 || val.G=='17') {
   const page = await browser.newPage();
-  console.log(val.F)
+
   await page.goto('https://lookup.oregondentistry.org/');
   await page.type('body > table > tbody > tr:nth-child(3) > td:nth-child(1) > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select','License');
   await page.type('body > table > tbody > tr:nth-child(3) > td:nth-child(1) > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)',val.K);
   await page.waitFor(150);
+
+
   try {
   await page.click('body > table > tbody > tr:nth-child(3) > td:nth-child(1) > table > tbody > tr > td > form > table > tbody > tr:nth-child(4) > td > div > input[type="submit"]');
   await page.waitForSelector('body > table > tbody > tr:nth-child(2) > td > a');
-} catch(error) {console.log('Dental license not found')}
+} catch(error) { let uhoh; }
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
   await page.close();
   }
@@ -179,37 +186,128 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
   //Runs if provider is a physical therapist
   else if (val.G == '45'&& val.I =='420' && val.L.includes(',OR')) {
     const page = await browser.newPage();
-    console.log(val.F);
+
     await page.goto('https://hrlb.oregon.gov/ptlb/licenseelookup/');
     await page.type('body > table > tbody > tr:nth-child(3) > td > div > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > span > select', 'Lic');
     await page.type('body > table > tbody > tr:nth-child(3) > td > div > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > span > input[type="text"]:nth-child(1)',val.K.slice(0,5));
     await page.waitFor(200);
     await page.click('body > table > tbody > tr:nth-child(3) > td > div > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > span > input[type="submit"]');
+    await page.waitFor(200);
+
     try {
-    await waitForSelector('body > a > h3');
-  } catch(error) {
-    console.log('License not found')
-  }
+    await page.waitForSelector('body > a > h3',{timeout:10000});
+  } catch(error){ console.log(error) }
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
   await page.close();
   }
   //Runs if provider is an occupational therapist
   else if (val.G == '45'&& val.I =='390' && val.L.includes(',OR')) {
     const page = await browser.newPage();
-    console.log(val.F);
+
     await page.goto('https://hrlb.oregon.gov/otlb/licenseelookup/');
 
     await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)', val.F);
-    await page.waitFor(200);
+    await page.waitFor(250);
     await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]');
 
     try {
-    await waitForSelector('body > a > h3');
-  } catch(error) {
-    console.log('License not found')
-  }
+    await page.waitForSelector('body > a > h3');
+  } catch(error) {console.log(error)}
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
   await page.close();
+  }
+
+  //Runs if provider is a CADC
+  else if( val.I=='004' || val.I=='002') {
+    const page = await browser.newPage();
+    let nameArr = val.F.split(',');
+
+
+    const last = nameArr[0];
+    const first = nameArr[1];
+
+    await page.goto('https://www.mhacbo.org/en/registry/');
+    await page.type('#cbParamVirtual2', last);
+    await page.type('#cbParamVirtual1', first);
+    await page.waitFor(250);
+    await page.click('#Submit');
+    await page.waitFor(1000);
+    await page.emulateMedia('screen');
+    await page.setViewport({ width: 1900, height: 1000})
+    await page.emulateMedia('screen');
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
+
+    await page.close();
+  }
+
+  //Runs if provider is an optometrist
+  else if(val.G=='43' && val.L.includes(',OR')){
+    const page = await browser.newPage();
+    await page.goto('https://public.orlicensing.oregon.gov/obopublic/');
+    await page.type('#CPH1_txtsrcLicenseNo', val.K.slice(0,4));
+
+    await page.waitFor(150);
+    await page.click('#CPH1_btnGoFind');
+    try {
+      await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a',{timeout:10000});
+    } catch(error) { console.log(error)}
+    await page.setViewport({ width: 1900, height: 1000})
+    await page.emulateMedia('screen');
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
+
+    await page.close();
+  }
+  // Runs for BCBA
+  else if(val.I=='376' && val.L.includes(',OR')){
+    if (val.K.length>9){
+      let len=val.K.length-8;
+      val.K=val.K.slice(len);
+      ;
+    }
+    const page = await browser.newPage();
+
+    await page.goto('https://elite.hlo.state.or.us/OHLOPublicR/LPRBrowser.aspx');
+    await page.type('#CPH1_txtsrcLicenseNo',val.K);
+    await page.waitFor(150);
+    await page.click('#CPH1_btnGoFind');
+    try {
+      await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
+      await page.click('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
+
+
+    } catch(error){ console.log(error) }
+    await page.setViewport({ width: 2200, height: 1000})
+    await page.emulateMedia('screen');
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
+
+
+    await page.close();
+  }
+  //Runs for Dietians
+  else if(val.I=='326' && val.L.includes(',OR')){
+    if (val.K.length>9){
+      let len=val.K.length-8;
+      val.K=val.K.slice(len);
+
+    }
+    const page = await browser.newPage();
+
+    await page.goto('https://elite.hlo.state.or.us/OHLOPublicR/LPRBrowser.aspx');
+    await page.type('#CPH1_txtsrcLicenseNo',val.K);
+    await page.waitFor(150);
+    await page.click('#CPH1_btnGoFind');
+    try {
+      await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
+      await page.click('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
+
+
+    } catch(error){ console.log(error) }
+
+    await page.setViewport({ width: 1900, height: 1000})
+    await page.emulateMedia('screen');
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
+
+    await page.close();
   }
 }
 
@@ -219,15 +317,8 @@ await browser.close();
 await allDone();
 }
 
-//test catch
-// ipcMain.on('testSend', (e, fileName) => {
-//   console.log('ipc test running');
-//   console.log(fileName);
-// }
-// );
 
-
-
+//Converts excel to JSON and calls scraper function.
 function fileSelect(fileName, outputFolder){
   console.log('fileSelected');
  expiredFile = excelToJson({
@@ -240,6 +331,7 @@ physicianScraper(outputFolder);
 
 //catch fileNameSent
 ipcMain.on('fileNameSent', (e, fileName, outputFolder) => {
+  //console.log('file name sent caught')
   fileSelect(fileName, outputFolder);
 });
 

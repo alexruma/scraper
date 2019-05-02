@@ -1,0 +1,16 @@
+"package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64  --prune=true --out=release-builds",
+"package-win": "electron-packager . Lscraper-app --overwrite --asar=true --platform=win32 --arch=ia32  --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Scraper App\"",
+"package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds",
+
+
+"build": {
+  "appId": "scraperappid",
+  "asar": true,
+  "asarUnpack": "node_modules/puppeteer/.local-chromium/**/*",
+  "win": {
+    "target": "NSIS"
+  }
+},
+
+
+  "electron-packager": "^13.1.1"
