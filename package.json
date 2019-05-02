@@ -1,12 +1,15 @@
 {
-  "name": "License Scraper",
+  "name": "License-Scraper",
   "productName": "License Scraper",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64  --prune=true --out=release-builds",
+  "package-win": "electron-packager . Lscraper-app --overwrite --asar=true --platform=win32 --arch=ia32  --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Scraper App\"",
+  "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds"
   },
   "keywords": [],
   "author": "Alex Ruma",
@@ -17,6 +20,7 @@
     "yarn": "^1.15.2"
   },
   "devDependencies": {
-    "electron": "^4.1.4"
+    "electron": "^4.1.4",
+    "electron-packager": "^13.1.1"
   }
 }
