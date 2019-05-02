@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+<style>
+    body{
+      font-family: sans-serif;
+    padding: 10px;
+    }
+    .inputField{
+      border: solid black;
+      display: inline-block;
+    }
+    button{
+      display: inline-block;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <meta charset="utf-8">
+    <title>Select the Path to Chrome</title>
+  </head>
+  <body>
+<div> It looks like Chrome isn't where we expected it be on your machine. Please select the location where Chrome is installed on your machine.
+  Hint: It's normally in Program Files. Go there then look for the folder called "Google", then the subfolder called "Chrome", then the subfolder called "Application." Once you're in application, click on Chrome.
+  </div>
+  <button id="selectFile" class="btn waves-effect waves-light">Select</button>
+  <input type='text' id='fileValue'>
+  <script src='chromeSelect.js'></script>
+  </body>
+</html>

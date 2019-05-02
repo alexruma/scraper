@@ -9,21 +9,18 @@ const excelToJson = require('convert-excel-to-json');
 //Electron destructure
 const {app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog} = electron;
 
-process.env.NODE_ENV = 'production'
+//process.env.NODE_ENV = 'production'
 
 let expiredFile;
 let resultArr;
 
 
 //Path to Chrome on local machine. Puppeteer will utilize Chrome rather than Chromium.
-const exPath2='C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+let exPath2='C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrobme.exe'
 
 let imagePath= __dirname + "\\images\\"
 
 async function physicianScraper(imageFolder){
-
-
-
 
 
 const browser = await puppeteer.launch({
@@ -335,6 +332,8 @@ await allDone();
 }
 
 
+
+
 //Converts excel to JSON and calls scraper function.
 function fileSelect(fileName, outputFolder){
   console.log('fileSelected');
@@ -344,9 +343,25 @@ function fileSelect(fileName, outputFolder){
 
 resultArr=expiredFile.Sheet1;
 physicianScraper(outputFolder);
+};
+
+//Updates path to Chrome app on user's machine
+
+function chromePathUpdate(newPath){
+  exPath2=newPath;
 }
 
-//catch fileNameSent
+//Catch pathUpdate
+
+ipcMain.on('pathUpdate', (e, newPath) => {
+  chromePathUpdate(newPath);
+});
+
+//Catch path-select button clicked
+ipcMain.on('pathSelectRun', () => {
+  chromeSelectPopup();
+});
+//Catch fileNameSent
 ipcMain.on('fileNameSent', (e, fileName, outputFolder) => {
   //console.log('file name sent caught')
   fileSelect(fileName, outputFolder);
@@ -450,8 +465,30 @@ function helpMe(){
 helpWindow.on('close', function(){
   helpWindow =null;
 });
-}
+};
 
+
+
+function chromeSelectPopup(){
+  let chromeWindow = new BrowserWindow({
+    width:500,
+    height: 570,
+    title: 'Help'
+  });
+  chromeWindow.loadURL(url.format(
+    {
+      pathname: path.join(__dirname, '.\\HTML-and-scripts\\chromeSelect.html'),
+      protocol: 'file',
+      slashes: true
+    }
+  ));
+
+
+//Garbage Collection
+chromeWindow.on('close', function(){
+  chromeWindow =null;
+});
+};
 
 //ElectronJS stuff
 

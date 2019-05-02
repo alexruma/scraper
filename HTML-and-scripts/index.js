@@ -15,6 +15,7 @@ document.getElementById('openFile').addEventListener('click', openFile);
 document.getElementById('outputFolderSelect').addEventListener('click', selectOutput);
 document.getElementById('run-btn').addEventListener('click', run);
 document.getElementById('help-btn').addEventListener('click', help);
+document.getElementById('path-select-btn').addEventListener('click', pathSelectRun);
 
 
 
@@ -61,3 +62,7 @@ document.getElementById('help-btn').addEventListener('click', help);
  function help(){
    ipcRenderer.send('helpButtonClick');
  }
+
+function pathSelectRun(){
+  ipcRenderer.send('pathSelectRun');
+}
