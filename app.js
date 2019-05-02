@@ -16,7 +16,7 @@ let resultArr;
 
 
 //Path to Chrome on local machine. Puppeteer will utilize Chrome rather than Chromium.
-let exPath2='C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrobme.exe'
+let exPath2='C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 
 let imagePath= __dirname + "\\images\\"
 
