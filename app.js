@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const converter = require('./excel-convert');
 const electron = require('electron');
 const url = require('url');
@@ -78,7 +78,7 @@ await page.waitFor(100);
 else if (val.G=="33"  && val.L.includes(',OR') && val.I=="371") {
 
   const page = await browser.newPage();
-  const navigationPromise = page.waitForNavigation();
+
   await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
   await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select');
 await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select', 'LPC')
@@ -94,6 +94,23 @@ await page.waitFor(100);
 
   await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
   await page.close();
+  }
+  //Runs if provider is LCSW
+  else if(val.I=='206'  && val.L.includes(',OR')){
+      //format license number to remove extra character
+    if (val.K.length===5){
+      val.K = val.K.slice(1);
+    }
+
+    const page = await browser.newPage();
+    await page.goto('https://hrlb.oregon.gov/BLSW/LicenseeLookup/index.asp');
+    await page.type('body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select','license');
+    await page.type('body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)',val.K);
+    await page.waitFor(200);
+    await page.click('body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td:nth-child(2) > div > input[type="submit"]');
+    await page.waitForSelector('body > a > h3');
+    await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4'})
+    await page.close();
   }
 //Runs if provider is nurse practicioner or CRNA
 else if (val.G == "42" && val.L.includes(',OR') || val.G == "37" && val.L.includes(',OR')) {
