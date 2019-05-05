@@ -9,7 +9,7 @@ const excelToJson = require('convert-excel-to-json');
 //Electron destructure
 const {app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog} = electron;
 
-//process.env.NODE_ENV = 'production'
+process.env.NODE_ENV = 'production'
 
 let expiredFile;
 let resultArr;
@@ -78,10 +78,10 @@ else if (val.G=="33"  && val.L.includes(',OR') && val.I=="371") {
 
   await page.goto('https://hrlb.oregon.gov/oblpct/licenseelookup/index.asp');
   await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select');
-await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select', 'LPC')
+await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(1) > td:nth-child(2) > select', 'Last')
 await page.waitFor(100);
 
-  await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)', (val.K).slice(1));
+  await page.type('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]:nth-child(1)', val.F.split(' ')[0]);
   await page.waitFor(150);
   await page.click('body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-child(3) > td > div > input[type="submit"]')
   //this waitForSelector ensures that the page has loaded
@@ -245,7 +245,7 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
     await page.type('#cbParamVirtual1', first);
     await page.waitFor(250);
     await page.click('#Submit');
-    await page.waitFor(1000);
+    await page.waitFor(1300);
     await page.emulateMedia('screen');
     await page.setViewport({ width: 1900, height: 1000})
     await page.emulateMedia('screen');
