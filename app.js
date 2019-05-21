@@ -112,13 +112,13 @@ await page.waitFor(100);
 //Runs if provider is nurse practicioner or CRNA
 else if (val.G == "42" && val.L.includes(',OR') || val.G == "37" && val.L.includes(',OR')) {
   const page = await browser.newPage();
-
+try {
   await page.goto('https://osbn.oregon.gov/OSBNVerification/Default.aspx');
   await page.type('#ctl00_MainContent_txtLicense', val.K);
   await page.waitFor(150);
   await page.click('#ctl00_MainContent_btnLicense');
   await page.waitForSelector('#aspnetForm > div.page > div.main > p > span > a > span');
-  try { await page.click('#ctl00_MainContent_gvSearchResult > tbody > tr:nth-child(2) > td:nth-child(1) > a');
+   await page.click('#ctl00_MainContent_gvSearchResult > tbody > tr:nth-child(2) > td:nth-child(1) > a');
 } catch(error) {
 console.log(error)
 }
@@ -133,7 +133,7 @@ else if (val.G == "16" && val.L.includes(',OR')) {
 
 
     const page = await browser.newPage();
-    const navigationPromise = page.waitForNavigation();
+  try {
     await page.goto('https://obce.alcsoftware.com/liclookup.php');
     await page.type('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(3) > td > center > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2) > input[type="text"]', val.K);
 
@@ -142,7 +142,7 @@ else if (val.G == "16" && val.L.includes(',OR')) {
 
 
 
-     try {
+
        await page.waitForSelector('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table > tbody > tr:nth-child(2) > td:nth-child(3) > a', {timeout:7000});
        await page.click('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table > tbody > tr:nth-child(2) > td:nth-child(3) > a');
        await page.waitForSelector('body > table > tbody > tr:nth-child(3) > td.bodyContentGutter > table:nth-child(2) > tbody > tr:nth-child(2) > td > center > table:nth-child(3) > tbody > tr > td > form > input[type="submit"]',{timeout:7000})
@@ -163,11 +163,12 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
   }
 
     const navigationPromise = page.waitForNavigation();
+     try {
     await page.goto('https://obpe.alcsoftware.com/liclookup.php');
     await page.type('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > form > table > tbody > tr:nth-child(3) > td:nth-child(2) > input[type="text"]', val.K.slice(0,4))
     await page.waitFor(150);
     await page.click('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > form > table > tbody > tr:nth-child(5) > td > input[type="Submit"]:nth-child(1)');
-     try {
+
        await page.waitForSelector('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > a');
        await page.click('#main-table > tbody > tr:nth-child(4) > td.bodyContentGutter > table > tbody > tr:nth-child(3) > td > table > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > a');
 
@@ -243,9 +244,9 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
     await page.goto('https://www.mhacbo.org/en/registry/');
     await page.type('#cbParamVirtual2', last);
     await page.type('#cbParamVirtual1', first);
-    await page.waitFor(250);
+    await page.waitFor(450);
     await page.click('#Submit');
-    await page.waitFor(1300);
+    await page.waitFor(1500);
     await page.emulateMedia('screen');
     await page.setViewport({ width: 1900, height: 1000})
     await page.emulateMedia('screen');
@@ -265,7 +266,7 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
     try {
       await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a',{timeout:10000});
     } catch(error) { console.log(error)}
-    await page.setViewport({ width: 1900, height: 1000})
+    await page.setViewport({ width: 2400, height: 1000})
     await page.emulateMedia('screen');
     await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
 
@@ -279,12 +280,12 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
       ;
     }
     const page = await browser.newPage();
-
+    try {
     await page.goto('https://elite.hlo.state.or.us/OHLOPublicR/LPRBrowser.aspx');
     await page.type('#CPH1_txtsrcLicenseNo',val.K);
     await page.waitFor(150);
     await page.click('#CPH1_btnGoFind');
-    try {
+
       await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
       await page.click('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
 
@@ -305,12 +306,12 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
 
     }
     const page = await browser.newPage();
-
+  try {
     await page.goto('https://elite.hlo.state.or.us/OHLOPublicR/LPRBrowser.aspx');
     await page.type('#CPH1_txtsrcLicenseNo',val.K);
     await page.waitFor(150);
     await page.click('#CPH1_btnGoFind');
-    try {
+
       await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
       await page.click('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a');
 
