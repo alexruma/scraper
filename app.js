@@ -246,7 +246,7 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
     await page.type('#cbParamVirtual1', first);
     await page.waitFor(450);
     await page.click('#Submit');
-    await page.waitFor(1500);
+    await page.waitFor(2100);
     await page.emulateMedia('screen');
     await page.setViewport({ width: 1900, height: 1000})
     await page.emulateMedia('screen');
@@ -258,14 +258,24 @@ else if (val.G == "53" && val.L.includes(',OR') || val.G=="33" && val.I=='205') 
   //Runs if provider is an optometrist
   else if(val.G=='43' && val.L.includes(',OR')){
     const page = await browser.newPage();
-    await page.goto('https://public.orlicensing.oregon.gov/obopublic/');
-    await page.type('#CPH1_txtsrcLicenseNo', val.K.slice(0,4));
+    await page.goto('https://obo.openregulate.com/webs/obo/register/');
+    let licenseNumber = val.K.split('');
+    let pruneLicense = licenseNumber.map((val)=>{
+      if (isNaN(val) === false){
+        return val;
+      }
+    })
+    pruneLicense = pruneLicense.join('')
+    await page.type('#keywords', pruneLicense);
 
-    await page.waitFor(150);
-    await page.click('#CPH1_btnGoFind');
+    await page.waitFor(250);
+    await page.click('body > div.container > div > form > div:nth-child(2) > div > div > div > button > i');
+    await page.waitFor(850);
     try {
-      await page.waitForSelector('#CPH1_myDataGrid > tbody > tr.GridItemStyle > td:nth-child(3) > a',{timeout:10000});
+      await page.waitForSelector('body > div.container > div > div:nth-child(2) > div > div > div.row > div > div.pull-right > a',{timeout:5000});
+        await page.click('body > div.container > div > div:nth-child(2) > div > div > table > tbody > tr > td:nth-child(6) > a');
     } catch(error) { console.log(error)}
+    await page.waitFor(850);
     await page.setViewport({ width: 2400, height: 1000})
     await page.emulateMedia('screen');
     await page.pdf({path:imageFolder+'\\'+ val.F+'.pdf', format: 'A4', printBackground: true});
